@@ -8,13 +8,18 @@ router = APIRouter(tags=["cities"])
 
 
 @router.get("/", response_model=List[schemas.City])
-async def fetch_all_cities(db: AsyncSession = Depends(get_db)) -> List[schemas.City]:
+async def fetch_all_cities(
+        db: AsyncSession = Depends(get_db)
+) -> List[schemas.City]:
     cities = await crud.get_all_city(db)
     return cities
 
 
 @router.post("/", response_model=schemas.City)
-async def create_city(city: schemas.CityCreate, db: AsyncSession = Depends(get_db)):
+async def create_city(
+        city: schemas.CityCreate,
+        db: AsyncSession = Depends(get_db)
+):
     db_city = await crud.create_city(db=db, city=city)
     return db_city
 
