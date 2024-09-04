@@ -49,7 +49,7 @@ async def fetch_all_temperatures(
     return temperatures
 
 
-@router.get("/city/{city_id}/", response_model=List[schemas.Temperature])
+@router.get("/cities/{city_id}/", response_model=List[schemas.Temperature])
 async def fetch_temperatures_by_city(
         city_id: int,
         skip: int = 0,
