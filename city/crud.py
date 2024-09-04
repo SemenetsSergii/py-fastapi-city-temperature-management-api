@@ -1,10 +1,8 @@
 from typing import List, Optional
 
-from sqlalchemy import update
-
-from sqlalchemy import select
-from fastapi import HTTPException
+from sqlalchemy import update, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import HTTPException
 
 from city import models, schemas
 

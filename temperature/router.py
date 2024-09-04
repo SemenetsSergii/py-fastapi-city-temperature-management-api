@@ -1,11 +1,11 @@
 import asyncio
-import httpx
 import os
-
+from datetime import datetime
 from typing import List
+
+import httpx
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from datetime import datetime
 from dotenv import load_dotenv
 
 from temperature import crud, schemas

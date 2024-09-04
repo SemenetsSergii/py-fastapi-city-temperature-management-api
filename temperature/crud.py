@@ -1,7 +1,9 @@
 from typing import List
+
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
+
 from temperature import models, schemas
 from city import models as city_models
 
