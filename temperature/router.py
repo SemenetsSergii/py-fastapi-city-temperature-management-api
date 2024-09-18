@@ -17,6 +17,12 @@ API_KEY = os.getenv("WEATHER_API_KEY")
 router = APIRouter(tags=["temperatures"])
 
 
+class PaginationParams:
+    def __init__(self, skip: int = 0, limit: int = 10):
+        self.skip = skip
+        self.limit = limit
+
+
 async def fetch_temperature(city_name: str) -> float:
     async with httpx.AsyncClient() as client:
         try:
@@ -30,36 +36,37 @@ async def fetch_temperature(city_name: str) -> float:
         except httpx.HTTPStatusError as e:
             raise HTTPException(
                 status_code=e.response.status_code,
-                detail=f"Error fetching temperature: {str(e)}"
+                detail=f"Error fetching temperature: {e.response.text}"
             )
-        except Exception as e:
+        except httpx.RequestError as e:
             raise HTTPException(
                 status_code=500,
-                detail=f"Failed to fetch temperature: {str(e)}"
+                detail=f"Request error when fetching temperature: {str(e)}"
+            )
+        except httpx.TimeoutException as e:
+            raise HTTPException(
+                status_code=504,
+                detail=f"Timeout error when fetching temperature: {str(e)}"
             )
 
 
 @router.get("/", response_model=List[schemas.Temperature])
 async def fetch_all_temperatures(
-        skip: int = 0,
-        limit: int = 10,
+        pagination: PaginationParams = Depends(),
         db: AsyncSession = Depends(get_db)
 ) -> List[schemas.Temperature]:
-    temperatures = await crud.get_temperatures(db, skip=skip, limit=limit)
+    temperatures = await crud.get_temperatures(db, skip=pagination.skip, limit=pagination.limit)
     return temperatures
 
 
 @router.get("/cities/{city_id}/", response_model=List[schemas.Temperature])
 async def fetch_temperatures_by_city(
         city_id: int,
-        skip: int = 0,
-        limit: int = 10,
+        pagination: PaginationParams = Depends(),
         db: AsyncSession = Depends(get_db)
 ) -> List[schemas.Temperature]:
     temperatures = await crud.get_temperature_by_city(
-        db, city_id=city_id,
-        skip=skip,
-        limit=limit
+        db, city_id=city_id, skip=pagination.skip, limit=pagination.limit
     )
     return temperatures
 

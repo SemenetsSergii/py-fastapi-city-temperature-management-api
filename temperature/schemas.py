@@ -3,7 +3,6 @@ from datetime import datetime
 from pydantic import BaseModel
 
 
-
 class TemperatureBase(BaseModel):
     city_id: int
     date_time: datetime
@@ -17,5 +16,6 @@ class TemperatureCreate(TemperatureBase):
 class Temperature(TemperatureBase):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = {
+        "from_attributes": True
+    }
